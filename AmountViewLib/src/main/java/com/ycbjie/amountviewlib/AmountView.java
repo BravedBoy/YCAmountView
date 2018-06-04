@@ -83,6 +83,9 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
         } else {
             Log.e("AmountView","其他");
         }
+        if (mListener != null) {
+            mListener.onAmountChange(this, amount);
+        }
     }
 
 
@@ -120,6 +123,9 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
             }
             //将光标移到最后
             mEtAmount.setSelection(mEtAmount.getText().length());
+            if (mListener != null) {
+                mListener.onAmountChange(mEtAmount, amount);
+            }
             mEtAmount.addTextChangedListener(this);
         }
     };
@@ -174,6 +180,18 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
         mEtAmount.setSelection(mEtAmount.getText().toString().length());
     }
 
+
+    private OnAmountChangeListener mListener;
+    public void setOnAmountChangeListener(OnAmountChangeListener onAmountChangeListener) {
+        this.mListener = onAmountChangeListener;
+    }
+
+    /**
+     * 监听接口
+     */
+    public interface OnAmountChangeListener {
+        void onAmountChange(View view, int amount);
+    }
 
 
     /*----------------------------------------用户设置方法--------------------------------------*/
