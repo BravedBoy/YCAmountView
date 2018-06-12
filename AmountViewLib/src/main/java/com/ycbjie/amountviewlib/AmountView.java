@@ -2,6 +2,8 @@ package com.ycbjie.amountviewlib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -49,12 +51,21 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
     }
 
     public AmountView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+        this(context, attrs,0);
     }
 
     public AmountView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (attrs == null) {
+            return;
+        }
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AmountView);
+        int avBgSrc = typedArray.getResourceId(R.styleable.AmountView_avBgSrc, R.drawable.shape_amount_bg);
+        int avTextColor = typedArray.getColor(R.styleable.AmountView_avTextColor, Color.GRAY);
+        float avTextSize = typedArray.getDimension(R.styleable.AmountView_avTextSize, 18.0f);
+        typedArray.recycle();
+
+        init(context);
     }
 
     /**
@@ -107,18 +118,19 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
             mEtAmount.removeTextChangedListener(this);
             Log.e("AmountView","afterTextChanged");
             //注意不能为空
-            if(mEtAmount.getText().toString().length() == 0){
+            String string = mEtAmount.getText().toString();
+            if(string.length() == 0){
                 return;
             }
-            if(Integer.valueOf(mEtAmount.getText().toString()) > max_num){
+            if(Integer.valueOf(string) > max_num){
                 mEtAmount.setText(String.valueOf(max_num));
                 amount = max_num;
-            }else if(Integer.valueOf(mEtAmount.getText().toString())<min_num){
+            }else if(Integer.valueOf(string)<min_num){
                 mEtAmount.setText(String.valueOf(min_num));
                 amount = min_num;
             }else{
                 //这句话会报错
-                amount = Integer.valueOf(mEtAmount.getText().toString());
+                amount = Integer.valueOf(string);
                 mEtAmount.setText(String.valueOf(amount));
             }
             //将光标移到最后
@@ -234,6 +246,20 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
         toast.show();
     }
 
+
+    /**
+     * 设置et控件是否可以点击
+     * @param clickable             是否可以点击
+     */
+    public void setEtClickable(boolean clickable){
+        if (!clickable) {
+            mEtAmount.setClickable(false);
+            mEtAmount.setEnabled(false);
+        } else {
+            mEtAmount.setClickable(true);
+            mEtAmount.setEnabled(true);
+        }
+    }
 
 
 }

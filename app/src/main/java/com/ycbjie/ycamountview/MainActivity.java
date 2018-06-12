@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        init2();
     }
 
     private void init() {
@@ -26,4 +27,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void init2() {
+        AmountView av_view2 = findViewById(R.id.av_view2);
+        av_view2.setAmountNum(2,10,1);
+        av_view2.setEtClickable(false);
+        int amount = av_view2.getAmount();
+        av_view2.setOnAmountChangeListener(new AmountView.OnAmountChangeListener() {
+            @Override
+            public void onAmountChange(View view, int amount) {
+
+            }
+        });
+    }
+
+
+
 }
