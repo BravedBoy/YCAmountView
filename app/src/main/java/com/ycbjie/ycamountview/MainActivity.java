@@ -2,6 +2,7 @@ package com.ycbjie.ycamountview;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.ycbjie.amountviewlib.AmountView;
@@ -22,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         int amount = avView.getAmount();
         avView.setOnAmountChangeListener(new AmountView.OnAmountChangeListener() {
             @Override
-            public void onAmountChange(View view, int amount) {
-
+            public void onAmountChange(boolean isAdd, boolean isMaxOrMin, int amount) {
+                Log.e("change",isAdd+"-------"+isMaxOrMin+"----------"+amount);
             }
         });
     }
@@ -35,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
         av_view2.setEtClickable(false);
         int amount = av_view2.getAmount();
         av_view2.setOnAmountChangeListener(new AmountView.OnAmountChangeListener() {
-            @Override
-            public void onAmountChange(View view, int amount) {
 
+            @Override
+            public void onAmountChange(boolean isAdd, boolean isMaxOrMin, int amount) {
+                Log.e("change",isAdd+"-------"+isMaxOrMin+"----------"+amount);
             }
         });
     }

@@ -2,9 +2,9 @@
 <resources>
 
     <declare-styleable name="AmountView">
-        <attr name="avBgSrc" format="reference"/>
-        <attr name="avTextSize" format="dimension"/>
-        <attr name="avTextColor" format="color"/>
+        <!-- 中间TextView的宽度 -->
+        <attr name="tvWidth" format="dimension" />
+        <attr name="tvTextSize" format="dimension"/>
     </declare-styleable>
 
 </resources>

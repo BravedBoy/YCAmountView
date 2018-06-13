@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -59,25 +60,33 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
         if (attrs == null) {
             return;
         }
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AmountView);
-        int avBgSrc = typedArray.getResourceId(R.styleable.AmountView_avBgSrc, R.drawable.shape_amount_bg);
-        int avTextColor = typedArray.getColor(R.styleable.AmountView_avTextColor, Color.GRAY);
-        float avTextSize = typedArray.getDimension(R.styleable.AmountView_avTextSize, 18.0f);
+
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.AmountView);
+        int tvWidth = typedArray.getDimensionPixelSize(R.styleable.AmountView_tvWidth, 80);
+        int tvTextSize = typedArray.getDimensionPixelSize(R.styleable.AmountView_tvTextSize, 0);
         typedArray.recycle();
 
-        init(context);
+        init(context,tvWidth,tvTextSize);
     }
 
     /**
      * 做初始化的操作
-     * @param context           上下文
+     * @param context               上下文
+     * @param tvWidth               tvWidth
+     * @param tvTextSize            tvTextSize
      */
-    private void init(Context context) {
+    private void init(Context context, int tvWidth, int tvTextSize) {
         this.mContext = context;
         LayoutInflater.from(context).inflate(R.layout.amount_view, this);
         mIvSubtract = findViewById(R.id.iv_subtract);
         mEtAmount = findViewById(R.id.et_amount);
         mIvAdd = findViewById(R.id.iv_add);
+
+        LayoutParams params = new LayoutParams(tvWidth, LayoutParams.MATCH_PARENT);
+        mEtAmount.setLayoutParams(params);
+        if (tvTextSize != 0) {
+            mEtAmount.setTextSize(tvTextSize);
+        }
 
         mIvSubtract.setOnClickListener(this);
         mIvAdd.setOnClickListener(this);
@@ -93,9 +102,6 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
             add();
         } else {
             Log.e("AmountView","其他");
-        }
-        if (mListener != null) {
-            mListener.onAmountChange(this, amount);
         }
     }
 
@@ -125,19 +131,19 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
             if(Integer.valueOf(string) > max_num){
                 mEtAmount.setText(String.valueOf(max_num));
                 amount = max_num;
+                changeListener(false,true,amount);
             }else if(Integer.valueOf(string)<min_num){
                 mEtAmount.setText(String.valueOf(min_num));
                 amount = min_num;
+                changeListener(false,true,amount);
             }else{
                 //这句话会报错
                 amount = Integer.valueOf(string);
                 mEtAmount.setText(String.valueOf(amount));
+                changeListener(false,false,amount);
             }
             //将光标移到最后
             mEtAmount.setSelection(mEtAmount.getText().length());
-            if (mListener != null) {
-                mListener.onAmountChange(mEtAmount, amount);
-            }
             mEtAmount.addTextChangedListener(this);
         }
     };
@@ -149,11 +155,12 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
     private void subtract() {
         mEtAmount.removeTextChangedListener(textWatcher);
         if(amount <= min_num){
-            showToast(mContext,"购买数量最少是一");
+            showToast(mContext,"购买数量最少是1");
             return;
         }
         amount--;
         mEtAmount.setText(String.valueOf(amount));
+        changeListener(false,false,amount);
         mEtAmount.addTextChangedListener(textWatcher);
     }
 
@@ -163,11 +170,12 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
     private void add() {
         mEtAmount.removeTextChangedListener(textWatcher);
         if(amount >= max_num){
-            showToast(mContext,"购买数量不能超过库存数");
+            showToast(mContext,"购买数量不能超过库存数"+max_num);
             return;
         }
         amount++;
         mEtAmount.setText(String.valueOf(amount));
+        changeListener(true,false,amount);
         mEtAmount.addTextChangedListener(textWatcher);
     }
 
@@ -192,6 +200,12 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
         mEtAmount.setSelection(mEtAmount.getText().toString().length());
     }
 
+    private void changeListener(boolean isAdd, boolean isMaxOrMin, int amount){
+        if(mListener!=null){
+            mListener.onAmountChange(isAdd,isMaxOrMin,amount);
+        }
+    }
+
 
     private OnAmountChangeListener mListener;
     public void setOnAmountChangeListener(OnAmountChangeListener onAmountChangeListener) {
@@ -202,7 +216,7 @@ public class AmountView extends LinearLayout implements View.OnClickListener {
      * 监听接口
      */
     public interface OnAmountChangeListener {
-        void onAmountChange(View view, int amount);
+        void onAmountChange(boolean isAdd, boolean isMaxOrMin, int amount);
     }
 
 
