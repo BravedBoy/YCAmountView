@@ -27,4 +27,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     compile project(path: ':AmountViewLib')
+    compile 'com.squareup.retrofit2:converter-gson:2.4.0'
 }
