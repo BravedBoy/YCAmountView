@@ -1,6 +1,7 @@
 # YCAmountView
 - 购物车数量加减自定义控件
 - 失效效果如下所示：
+<image src="https://github.com/yangchong211/YCAmountView/blob/master/image/amount1.jpg" width=300/>
 
 
 
